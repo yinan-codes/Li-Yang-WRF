@@ -11,7 +11,7 @@ Created on Wed Mar 26 16:51:11 2025
    同时新增波列在对应网格的平均传播速度wave_propagation_u, wave_propagation_v
 9.11为加强使用者对计算结果形式的理解同时方便将计算结果绘图，在WRF_calu中一并输出对应的lon, lat。感谢王琳洁师姐的建议
 9.16诊断过程中发现存在东半球的波西传到西半球，因此在西侧再加入一轮坐标（-360°-0°）。感谢朱勉师兄的发现与建议
-9.18由于后续WRF计算涉及到累加，将0值输出为nan暂时改为输出0
+9.18由于后续WRF计算涉及到累加，将0值输出为nan，改为输出0，使用者可以绘图时自行设置
 
 @author: 杨艺楠1; supervisor: 李建平 教授1,2
 1 Frontiers Science Center for Deep Ocean Multi-spheres and Earth System (DOMES)/Key Laboratory of Physical Oceanography/
