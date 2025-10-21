@@ -89,7 +89,17 @@ def region_threshold(lon_rec1, lon_rec2, lat_rec1, lat_rec2,
                     yall.append(y_masked)
           
                     
+    # —— 安全返回 —— 
+    # 若没有任何轨迹被选入，返回 (T, 0) 的空数组，计数为 0，避免索引越界而报错
+    if len(xall) == 0:
+        T = rlon1.shape[0]  # 时间维长度
+        empty_x = np.empty((T, 0), dtype=float)
+        empty_y = np.empty((T, 0), dtype=float)
+        entered_count = 0
+        # multi_entry_count 在前面已经初始化为 0
+        return empty_x, empty_y, entered_count, multi_entry_count
 
+    # 正常情况：至少有一条轨迹
     xout = np.array(xall).T; entered_count = xout.shape[1]
     return np.array(xall).T, np.array(yall).T, entered_count, multi_entry_count
 

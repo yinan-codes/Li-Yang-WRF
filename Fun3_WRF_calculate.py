@@ -22,6 +22,23 @@ def WRF_calu(rlon_selected, rlat_selected, a, space, conver, time_step):
     num_lon_bins = len(lon_bins) 
     num_lat_bins = len(lat_bins) 
     
+    # ========= 新增：波源计数（每条射线第一个点） =========
+    # 取源点（第一个时间步）
+    src_lon = np.asarray(rlon_selected)[0, :]
+    src_lat = np.asarray(rlat_selected)[0, :]
+    
+    # 用与主循环相同的 digitize→索引→clip 规则映射到格点
+    ilon0 = np.digitize(src_lon, lon_bins) - 1
+    ilat0 = np.digitize(src_lat, lat_bins) - 1
+    ilon0 = np.clip(ilon0, 0, num_lon_bins - 1)
+    ilat0 = np.clip(ilat0, 0, num_lat_bins - 1)
+
+    # 逐源点累加计数（逻辑上等价于“逐点遍历 +1”，但用 add.at 向量化）
+    source_count = np.zeros((num_lon_bins, num_lat_bins), dtype=np.int32)
+    if ilon0.size > 0:
+        np.add.at(source_count, (ilon0, ilat0), 1)
+    # ===================================================
+    
     # 3D 记录（保留，不再用它们做“首入-末出”求差）
     shape = (num_lon_bins, num_lat_bins, rlon_selected.shape[1])
     first_entry_lon = np.full(shape, np.nan)
@@ -134,7 +151,7 @@ def WRF_calu(rlon_selected, rlat_selected, a, space, conver, time_step):
         phiM = np.deg2rad(0.5*(le_lat + fe_lat))       # 段中点纬度（弧度）
 
         with np.errstate(invalid='ignore', divide='ignore'):
-            # conver = (π/180)*a，单位 m/°
+            
             u_seg = (dlam/dt) * (conver * np.cos(phiM))  # m/s
             v_seg = (dphi/dt) * (conver)                 # m/s
 
@@ -152,6 +169,6 @@ def WRF_calu(rlon_selected, rlat_selected, a, space, conver, time_step):
     # 平均到达时间（天）：按“各射线第一次进入该格”的平均
     wave_propagation_time = np.nanmean(first_entry_time_first, axis=2) * (time_step/3600.0/24)
 
-    return (lon, lat, WRF_u, WRF_v, ray_count, wave_propagation_time, wave_propagation_u, wave_propagation_v)
+    return (lon, lat, WRF_u, WRF_v, ray_count, wave_propagation_time, wave_propagation_u, wave_propagation_v, source_count)
 
 
