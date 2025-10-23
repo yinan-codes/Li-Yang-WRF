@@ -7,7 +7,7 @@ Fun1_threshold defines a velocity threshold to exclude anomalous wave numbers (o
 
 Fun2_region_threshold identifies wave rays that pass through a specified target region;
 
-Fun3_WRF_calculate evaluates the wave ray flux (Li–Yang WRF).
+Fun3_WRF_calculate evaluates the wave ray flux (Li–Yang WRF).With the continuous development of the program, an increasing number of diagnostic variables can be computed, such as the mean propagation time and velocity of Rossby waves, as well as the source locations of wave rays passing through it. These variables likewise serve as powerful diagnostic tools for investigating Rossby wave activity.
 
 All procedures are implemented within the main script (WRF_universal).
 
