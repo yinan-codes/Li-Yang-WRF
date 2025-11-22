@@ -7,24 +7,31 @@ Created on Wed Mar 26 21:44:42 2025
 import netCDF4 as nc
 import numpy as np
 
+# def load_wave_ray_data(path):
+#     """
+#     从指定路径的 NetCDF 文件中读取波射线变量：
+#     rlon、rlat、rzwn、rmwn，并进行 squeeze 处理。
+
+#     参数：
+#         path (str): NetCDF 文件路径
+
+#     返回：
+#         rlon, rlat, rzwn, rmwn: 全部为 ndarray
+#     """
+#     with nc.Dataset(path) as ds:
+#         rlon = ds.variables['rlon'][:].squeeze()
+#         rlat = ds.variables['rlat'][:].squeeze()
+#         rzwn = ds.variables['rzwn'][:].squeeze()
+#         rmwn = ds.variables['rmwn'][:].squeeze()
+    
+#     return rlon, rlat, rzwn, rmwn
 def load_wave_ray_data(path):
-    """
-    从指定路径的 NetCDF 文件中读取波射线变量：
-    rlon、rlat、rzwn、rmwn，并进行 squeeze 处理。
-
-    参数：
-        path (str): NetCDF 文件路径
-
-    返回：
-        rlon, rlat, rzwn, rmwn: 全部为 ndarray
-    """
     with nc.Dataset(path) as ds:
         rlon = ds.variables['rlon'][:].squeeze()
         rlat = ds.variables['rlat'][:].squeeze()
-        rzwn = ds.variables['rzwn'][:].squeeze()
         rmwn = ds.variables['rmwn'][:].squeeze()
     
-    return rlon, rlat, rzwn, rmwn
+    return rlon, rlat, rmwn
 #==============================================================================
 def threshold(rlon0, rlat0, wn_min, wn_max, conver, time_step, velo_threshold, *, # *表示从此处开始只能关键字传参，不得位置传参
               rzwn=None, rmwn=None, check_wn=False, wn_threshold=None, L=None):
@@ -89,7 +96,8 @@ def threshold(rlon0, rlat0, wn_min, wn_max, conver, time_step, velo_threshold, *
                 for var in (rzwn, rmwn):
                     if cut_done:
                         break
-    
+                    if var is None:
+                        continue
                     series = var[:, j, loc, wn]  # shape (T,)
                     if series.size < 3 or np.isnan(series).all():
                         continue
