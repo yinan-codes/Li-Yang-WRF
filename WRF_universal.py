@@ -40,25 +40,24 @@ from Fun3_WRF_calculate import WRF_calu
 # 初始参数======================================================================
 a = 6371e3; # 地球半径
 space = 4; # WRF计算的空间分辨率（网格大小）space° x space°
-level = 850; # 气压层
-# day_num = 20 # 总时长（天数）
 time_step = 3600 # 时间步长 单位：s
 velo_threshold = 150 # 截断速度阈值（可选）
-
 conver = np.full((1), np.deg2rad(1) * a) # 经向换算因子（单位：m/°） 
 wn_min = 3; wn_max = 5 # 所需波数的最小，最大值；默认跑全了1-7波
+target_region = (90 + 360, 140 + 360, 15, 40) # 设置目标区域参数 格式为lon_min; lon_max; lat_min; lat_max 注意需要按照-360至720的经度来（三圈Mercator地球坐标）；
+lon_min, lon_max, lat_min, lat_max = target_region
 # =============================================================================
 
-path1 = 'D:/data/to/your/path'
-rlon0, rlat0, rzwn, rmwn = load_wave_ray_data(path1)
+path1 = 'D:/data/to/your/path' # 波射线计算结果（nc）
+rlon, rlat, rmwn = load_wave_ray_data(path1)
 
 # 设置速度阈值并剔除异常值=======================================================
-rlon1, rlat1 = threshold(rlon0, rlat0, wn_min, wn_max, conver, time_step, velo_threshold, 
-                          rzwn=rzwn, rmwn=rmwn, check_wn=False, wn_threshold=7, L=5) # check_wn 是否进行经向波数制约
+rlon1, rlat1 = threshold(rlon, rlat, wn_min, wn_max, conver, time_step, velo_threshold, 
+                          rzwn=None, rmwn=rmwn, check_wn=False, wn_threshold=7, L=5) # check_wn 是否进行经向波数制约
 
 
-#设置区域参数 格式为lon_min; lon_max; lat_min; lat_max 注意需要按照-360至720的经度来（三圈Mercator地球坐标）； ## cut = True表示离开目标区时截断；False保留完整轨迹 
-rlon_selected, rlat_selected, entered_count, multi_entry_count = region_threshold(90+360, 140+360, 15, 40, rlon1, rlat1, wn_min, wn_max, cut=True);
+# cut = True表示离开目标区时截断；False保留完整轨迹 
+rlon_selected, rlat_selected, entered_count, multi_entry_count = region_threshold(lon_min, lon_max, lat_min, lat_max, rlon1, rlat1, wn_min, wn_max, cut=True);
 
 # 计算wave ray flux (WRF)矢量，波射线数量，波列传播到对应网格的平均时间（单位：day），波列在对应网格的平均传播速度
 lon, lat, WRF_u, WRF_v, ray_count, wave_propagation_time, wave_propagation_u, wave_propagation_v, source_count = WRF_calu(rlon_selected, rlat_selected, a, space, conver, time_step)
