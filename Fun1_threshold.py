@@ -72,7 +72,7 @@ def threshold(rlon0, rlat0, wn_min, wn_max, conver, time_step, velo_threshold, *
     
     
     # 计算差分的平方和
-    diff_square = np.sqrt((rlon_diff*conver/time_step)**2 + (rlat_diff*cos_lat*conver/time_step)**2) # 考虑纬度变化
+    diff_square = np.sqrt((rlon_diff*cos_lat*conver/time_step)**2 + (rlat_diff*conver/time_step)**2) # 考虑纬度变化
 
     # 找到满足条件的索引
     exceed_threshold = diff_square > velo_threshold  # 设置速度阈值

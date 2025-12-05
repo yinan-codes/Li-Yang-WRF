@@ -15,6 +15,7 @@ Created on Wed Mar 26 16:51:11 2025
 9.23对Fun2_region_threshold的输出改进为如果没有波射线经过目标区，则输出空数组，而不是报错；
     对WRF_calu输出追溯波源的变量source_count，适用于全球波源
 10.8对Fun1_threshold将经向波数连续不稳定的时间长度L设置为外部参数。感谢张公俊师兄提供的实例
+12.5对Fun1_threshold中截断速度的计算进行调整，感谢刘一凡同学的提示
 
 @author: 杨艺楠1; supervisor: 李建平 教授1,2
 1 Frontiers Science Center for Deep Ocean Multi-spheres and Earth System (DOMES)/Key Laboratory of Physical Oceanography/
