@@ -131,8 +131,8 @@ def mask_out_of_box_after_entry(x, y, lon_min, lon_max, lat_min, lat_max, cut=Tr
         if np.isnan(xi) or np.isnan(yi):
             continue
         if not (lon_min <= xi <= lon_max and lat_min <= yi <= lat_max):
-            x[idx:] = np.nan
-            y[idx:] = np.nan
+            x[idx+1:] = np.nan # 保留最后一次出框的第一个框外值，保证该网格可以计算WRF
+            y[idx+1:] = np.nan
             break  # 截断一次后即退出
 
     return x, y
