@@ -77,7 +77,7 @@ def WRF_calu(rlon_selected, rlat_selected, a, space, conver, time_step):
             continue
         last_valid_idx = int(idx_valid[-1])
 
-        for i in range(last_valid_idx - 1):
+        for i in range(last_valid_idx): 
             if not (valid[i] and valid[i+1]):
                 # 断点：丢弃未闭合的一次通过
                 continue
@@ -160,15 +160,17 @@ def WRF_calu(rlon_selected, rlat_selected, a, space, conver, time_step):
         WRF_v = np.zeros_like(WRF_u)
         np.add.at(WRF_u, (ix, iy), u_seg)
         np.add.at(WRF_v, (ix, iy), v_seg)
-
+        
         # 每格“每次经过的平均速度”（可视化/诊断用）
         with np.errstate(invalid='ignore'):
             wave_propagation_u = np.where(ray_count>0, WRF_u/np.maximum(ray_count,1), np.nan)
             wave_propagation_v = np.where(ray_count>0, WRF_v/np.maximum(ray_count,1), np.nan)
 
-    # 平均到达时间（天）：按“各射线第一次进入该格”的平均
-    wave_propagation_time = np.nanmean(first_entry_time_first, axis=2) * (time_step/3600.0/24)
+        # 平均到达时间（天）：按“各射线第一次进入该格”的平均
+        wave_propagation_time = np.nanmean(first_entry_time_first, axis=2) * (time_step/3600.0/24)
+        
 
     return (lon, lat, WRF_u, WRF_v, ray_count, wave_propagation_time, wave_propagation_u, wave_propagation_v, source_count)
+
 
 
